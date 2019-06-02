@@ -4,7 +4,7 @@
  * This code is mashup from Adafruit_ADXL345 and ButtonMouse.
  * We are building DIY foot mouse!
  * 
- * TODO: Mouse funtion ON/OFF for debug w/ button
+ * TODO: Mouse funtion ON/OFF for debug w/ Button, LED
  * TODO: Speed change w/ button thus need one more button?
  * 
  */
@@ -43,11 +43,18 @@
 Adafruit_ADXL345_Unified accel = Adafruit_ADXL345_Unified(12345);
 
 // set pin numbers for the five buttons:
-const int upButton = 2;
-const int downButton = 3;
-const int leftButton = 4;
-const int rightButton = 5;
-const int mouseButton = 6;
+const int upButton     =  2;
+const int downButton   =  3;
+const int leftButton   =  4;
+const int rightButton  =  5;
+const int mouseButton  =  6;
+// set pin for on/off mouse function
+const int ledPin       = 11;
+const int debugButton  = 12;
+
+
+// variables will change:
+int buttonState = 0;         // variable for reading the pushbutton status
 
 int range = 5;              // output range of X or Y movement; affects movement speed
 int responseDelay = 10;     // response delay of the mouse, in ms
@@ -158,7 +165,8 @@ void displayRange(void)
 
 void setup() {
   // --- Setup LED for debug ---
-  pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(ledPin, OUTPUT);
+  pinMode(debugButton, INPUT);
   
   // --- Setup for sensor and serial display ---
 #ifndef ESP8266
@@ -201,6 +209,18 @@ void setup() {
 }
 
 void loop() {
+  /* --- Debub button on/off --- */
+  // read the state of the pushbutton value:
+  buttonState = digitalRead(debugButton);
+
+  // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
+  if (buttonState == HIGH) {
+    // turn LED on:
+    digitalWrite(ledPin, HIGH);
+  } else {
+    // turn LED off:
+    digitalWrite(ledPin, LOW);
+  }
 
   /* --- Sending serial debug message --- */
   /* Get a new sensor event */ 
