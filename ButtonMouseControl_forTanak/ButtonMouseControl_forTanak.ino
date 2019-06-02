@@ -2,8 +2,10 @@
  * Tänak Controller
  * 
  * This code is mashup from Adafruit_ADXL345 and ButtonMouse.
- * 
  * We are building DIY foot mouse!
+ * 
+ * TODO: Mouse funtion ON/OFF for debug w/ button
+ * TODO: Speed change w/ button thus need one more button?
  * 
  */
 
@@ -155,6 +157,9 @@ void displayRange(void)
 }
 
 void setup() {
+  // --- Setup LED for debug ---
+  pinMode(LED_BUILTIN, OUTPUT);
+  
   // --- Setup for sensor and serial display ---
 #ifndef ESP8266
   while (!Serial); // for Leonardo/Micro/Zero
@@ -227,6 +232,8 @@ void loop() {
   }
 
   // if the mouse button is pressed:
+  // Temporary off
+  /*
   if (clickState == HIGH) {
     // if the mouse is not pressed, press it:
     if (!Mouse.isPressed(MOUSE_LEFT)) {
@@ -240,6 +247,7 @@ void loop() {
       Mouse.release(MOUSE_LEFT);
     }
   }
+  */
 
   // a delay so the mouse doesn't move too fast:
   delay(responseDelay);
