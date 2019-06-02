@@ -5,6 +5,7 @@
  * We are building DIY foot mouse!
  * 
  * TODO: Mouse funtion ON/OFF for debug w/ Button, LED
+ * TODO: Sensor-Mouse integration
  * TODO: Speed change w/ button thus need one more button?
  * 
  */
@@ -56,7 +57,7 @@ const int debugButton  = 12;
 // variables will change:
 int buttonState  = 0;         // variable for reading the pushbutton status
 int buttonLevel  = 0;         // to avoid chattering 
-bool ledState   = false;
+bool mouseState   = false;
 
 int range = 5;              // output range of X or Y movement; affects movement speed
 int responseDelay = 10;     // response delay of the mouse, in ms
@@ -223,11 +224,11 @@ void loop() {
 
   // To avoid chattering. Algorithm still has chance to improve though
   if (buttonLevel > 5){
-    ledState =! ledState;
+    mouseState =! mouseState;
     buttonLevel = 0;
   }
 
-  if (ledState == true){
+  if (mouseState == true){
     digitalWrite(ledPin, HIGH);
   } else {
     digitalWrite(ledPin, LOW);
@@ -235,7 +236,7 @@ void loop() {
 
   Serial.print("Btn: "); Serial.print(buttonState); Serial.print("  ");
   Serial.print("BtnL: "); Serial.print(buttonLevel); Serial.print("  ");
-  Serial.print("LED: "); Serial.print(ledState); Serial.print("  ");
+  Serial.print("LED: "); Serial.print(mouseState); Serial.print("  ");
 
   /* --- Sending serial debug message --- */
   /* Get a new sensor event */ 
@@ -250,6 +251,13 @@ void loop() {
 
 
   /* --- Running mouse --- */
+  // Simple solution
+  if(mouseState){
+    int  xDistance = event.acceleration.x * range;
+    int  yDistance = event.acceleration.y * range;
+    Mouse.move(xDistance, yDistance, 0);
+  }
+  /*
   // read the buttons:
   int upState = digitalRead(upButton);
   int downState = digitalRead(downButton);
@@ -266,6 +274,7 @@ void loop() {
     // Temporary off
     //Mouse.move(xDistance, yDistance, 0);
   }
+  */
 
   // if the mouse button is pressed:
   // Temporary off
