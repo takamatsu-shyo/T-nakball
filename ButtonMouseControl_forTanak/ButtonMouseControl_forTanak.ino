@@ -54,7 +54,9 @@ const int debugButton  = 12;
 
 
 // variables will change:
-int buttonState = 0;         // variable for reading the pushbutton status
+int buttonState  = 0;         // variable for reading the pushbutton status
+int buttonLevel  = 0;         // to avoid chattering 
+bool ledState   = false;
 
 int range = 5;              // output range of X or Y movement; affects movement speed
 int responseDelay = 10;     // response delay of the mouse, in ms
@@ -215,12 +217,25 @@ void loop() {
 
   // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
   if (buttonState == HIGH) {
-    // turn LED on:
+    // toggle LED state:
+    buttonLevel ++;
+  }
+
+  // To avoid chattering. Algorithm still has chance to improve though
+  if (buttonLevel > 5){
+    ledState =! ledState;
+    buttonLevel = 0;
+  }
+
+  if (ledState == true){
     digitalWrite(ledPin, HIGH);
   } else {
-    // turn LED off:
     digitalWrite(ledPin, LOW);
   }
+
+  Serial.print("Btn: "); Serial.print(buttonState); Serial.print("  ");
+  Serial.print("BtnL: "); Serial.print(buttonLevel); Serial.print("  ");
+  Serial.print("LED: "); Serial.print(ledState); Serial.print("  ");
 
   /* --- Sending serial debug message --- */
   /* Get a new sensor event */ 
@@ -248,7 +263,8 @@ void loop() {
 
   // if X or Y is non-zero, move:
   if ((xDistance != 0) || (yDistance != 0)) {
-    Mouse.move(xDistance, yDistance, 0);
+    // Temporary off
+    //Mouse.move(xDistance, yDistance, 0);
   }
 
   // if the mouse button is pressed:
